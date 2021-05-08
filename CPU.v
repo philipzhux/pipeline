@@ -1,5 +1,7 @@
-module CPU(clk,Reset);
-wire clk,Ctl_Mux,EqualFlag,Reset,PC_Stall,ID_ALUSrc,ID_Branch;
+module CPU(clk,Reset,stop);
+input wire clk, Reset;
+output reg stop;
+wire Ctl_Mux,EqualFlag,PC_Stall,ID_ALUSrc,ID_Branch;
 wire EX_ALUSrc,EX_Link,EX_MemtoReg,EX_MemWrite,EX_RegDst,EX_RegWrite;
 wire ID_Link,ID_MemtoReg,ID_MemWrite,ID_RegDst,ID_RegWrite,IF_ID_Flush,IF_ID_Stall,invalidRt;
 wire MEM_Link,MEM_MemtoReg,MEM_MemWrite,MEM_RegWrite,RB_Link,RB_MemtoReg,RB_RegWrite;
@@ -30,6 +32,7 @@ Mux3x32 PCMux(ID_JBFlag,IF_PCPlus4,ID_PCBranch,ID_PCJump,PCRaw);//Mux Syntax: Si
 PCReg PCHolder(PCRaw,IF_PC,Reset,PC_Stall);//PCReg Syntax: rawPC,outPC,Reset,stall
 Add PCAdder(IF_PC,32'h00000004,IF_PCPlus4);
 InstructionRAM InsMem(1'b0,1'b1,IF_PC<<2,IF_Instr);
+StopControl StopOrNot(IF_Instr,stop);
 IF_ID_Reg IF_ID_Register(clk,IF_PCPlus4,IF_Instr,IF_ID_Stall,IF_ID_Flush,ID_PCPlus4,ID_Instr);
 //clk,IF_PCPlus4,IF_Instr,IF_Stall,IF_Flush,PCPlus4D,InstrD
 
