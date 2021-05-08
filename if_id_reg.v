@@ -6,16 +6,16 @@ module IF_ID_Reg(clk,PCPlus4F,InstrF,IF_Stall,IF_Flush,PCPlus4D,InstrD);
 
   always @(posedge clk)
     begin
-    if (IF_hold==1'b0) 
+    if (IF_Stall==1'b0) 
     begin
         if (IF_Flush==1'b1)
         begin
             PCPlus4D<=PCPlus4F; 
-            InstrF<=32'b0;
+            InstrD<=32'b0;
         end
         else begin
             PCPlus4D<=PCPlus4F;
-            InstrF <= instrIn; 
+            InstrD <= InstrF; 
         end    
     end
     end

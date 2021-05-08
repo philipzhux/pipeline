@@ -20,6 +20,7 @@ parameter NOR = 4'b1001;
 parameter SLLV = 4'b1010;
 parameter SRLV = 4'b1011;
 parameter SRAV = 4'b1100;
+parameter XOR = 4'b1101;
 
 always @(ALUControl, in1, in2)
 begin
@@ -55,6 +56,10 @@ LESS:
 NOR:
 	begin
 	res <= ~(in1 | in2);
+	end
+XOR:
+	begin
+	res <= in1 ^ in2;
 	end
 endcase
 end

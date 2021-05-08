@@ -1,4 +1,4 @@
-module EX_MEM_Reg(clk,RegWriteE,MemtoRegE,MemWriteE,WriteRegE,EX_ALUOut,EX_WriteData,EX_Link,EX_PCPlus4
+module EX_MEM_Reg(clk,RegWriteE,MemtoRegE,MemWriteE,WriteRegE,EX_ALUOut,EX_WriteData,EX_Link,EX_PCPlus4,
 RegWriteM,MemtoRegM,MemWriteM,WriteRegM,MEM_ALUOut,MEM_WriteData,MEM_Link,MEM_PCPlus4);
     input clk,RegWriteE,MemtoRegE,MemWriteE,EX_Link;
     input wire[4:0] WriteRegE;

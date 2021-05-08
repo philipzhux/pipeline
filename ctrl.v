@@ -9,9 +9,9 @@ output reg[1:0] JBFlag;
  parameter BNE = 6'b000101;
  parameter JR = 6'b001000;
 always @ (*) begin
-  if ((OP==BNE && ~equalFlag) || (OP==BEQ && equalFlag)) JBControl<=2'b01;
-  else if ((OP == J) || (OP == JAL) || ((OP == R_Type) && (Funct == JR))) JBControl<=2'b10;
-  else JBControl <=2b'00;
+  if ((OP==BNE && ~equalFlag) || (OP==BEQ && equalFlag)) JBFlag<=2'b01;
+  else if ((OP == J) || (OP == JAL) || ((OP == R_Type) && (Funct == JR))) JBFlag<=2'b10;
+  else JBFlag <= 2'b00;
 end
 endmodule
 
@@ -20,24 +20,21 @@ input [5:0] OP,Funct;
 input [25:0] JRawAddr;
 input [31:0] PCPlus4,ReadData1;
 output reg [31:0] JAddr;
+parameter J = 6'b000010;
+parameter JAL = 6'b000011;
 always @ (*) begin
-  if((OP == J) || (OP == JAL)) JAddr<={PCPlu4[31:28],JRawAddr,2'b00};
+  if((OP == J) || (OP == JAL)) JAddr<={PCPlus4[31:28],JRawAddr,2'b00};
   else JAddr<=ReadData1;
 end
 endmodule
 
 module LinkControl(OP,Link);
+parameter JAL = 6'b000011;
 input [5:0] OP;
 output Link;
 assign Link = (OP==JAL)?1'b1:1'b0;
-
+endmodule
 module ControlUnit(reset,CtlMux,op,funct,RegWrite,MemtoReg,Branch,ALUControl,ALUSrc,RegDst,MemWrite,invalidRt);
-input wire[5:0] op,funct;
-input reset;
-input CtlMux;
-output reg RegDst,Branch,MemtoReg,MemWrite,ALUSrc,RegWrite,invalidRt;
-output reg [3:0] ALUControl;
-//op code record
 parameter R=6'b000000;
 parameter lw=6'b100011;
 parameter sw=6'b101011;
@@ -76,6 +73,18 @@ parameter NOR = 4'b1001;
 parameter SLLV = 4'b1010;
 parameter SRLV = 4'b1011;
 parameter SRAV = 4'b1100;
+parameter XOR = 4'b1101;
+//func
+parameter J = 6'b000010;
+parameter JAL = 6'b000011;
+parameter BEQ = 6'b000100;
+parameter BNE = 6'b000101;
+parameter JR = 6'b001000;
+input wire[5:0] op,funct;
+input reset;
+input CtlMux;
+output reg RegDst,Branch,MemtoReg,MemWrite,ALUSrc,RegWrite,invalidRt;
+output reg [3:0] ALUControl;
 
   always @(posedge reset)
   begin
@@ -91,7 +100,7 @@ parameter SRAV = 4'b1100;
 
   always@(op)
     begin
-    if(Control_Mux==1'b1)
+    if(CtlMux==1'b1)
     begin
         RegDst <= 1'b0;
         Branch <= 1'b0;
@@ -105,7 +114,7 @@ parameter SRAV = 4'b1100;
     else begin
         case (op)
 
-        R_type:           
+        R:           
 
           begin
           case (funct)
@@ -279,7 +288,6 @@ parameter SRAV = 4'b1100;
           begin
           RegDst<=0 ;
           Branch<=0 ;
-          Memread<=1 ;
           MemtoReg<=1 ;
           MemWrite<=0 ;
           ALUSrc<=1 ;
@@ -294,7 +302,6 @@ parameter SRAV = 4'b1100;
           begin
           //RegDst<=1'bx ;
           Branch<=0 ;
-          Memread<=0 ;
           MemtoReg<=0 ;
           MemWrite<=1 ;
           ALUSrc<=1 ;
@@ -308,7 +315,6 @@ parameter SRAV = 4'b1100;
           begin
           //RegDst<=1'bx ;
           Branch<= 1;
-          Memread<=0 ;
           MemtoReg<=0 ;
           MemWrite<=0 ;
           ALUSrc<=0 ;
@@ -321,7 +327,6 @@ parameter SRAV = 4'b1100;
           begin
           RegDst<=0 ;
           Branch<=0 ;
-          Memread<=0 ;
           MemtoReg<=0 ;
           MemWrite<=0 ;
           ALUSrc<=1 ;
@@ -335,7 +340,6 @@ parameter SRAV = 4'b1100;
           begin
           RegDst<=0 ;
           Branch<=0 ;
-          Memread<=0 ;
           MemtoReg<=0 ;
           MemWrite<=0 ;
           ALUSrc<=1 ;
@@ -349,7 +353,6 @@ parameter SRAV = 4'b1100;
           begin
           RegDst<=0 ;
           Branch<=0 ;
-          Memread<=0 ;
           MemtoReg<=0 ;
           MemWrite<=0 ;
           ALUSrc<=1 ;
@@ -363,12 +366,11 @@ parameter SRAV = 4'b1100;
           begin
           RegDst<=0 ;
           Branch<=0 ;
-          Memread<=0 ;
           MemtoReg<=0 ;
           MemWrite<=0 ;
           ALUSrc<=1 ;
           RegWrite<=1 ;
-          ALUControl<=SLT;
+          ALUControl<=LESS;
           invalidRt <= 1'b1;
           end
     J: begin

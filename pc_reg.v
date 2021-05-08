@@ -8,7 +8,7 @@ always @(*)
   begin
 	  if (PC_Stall==1'b0)
 		  begin
-        outPC <= nextPC;
+        outPC <= rawPC;
 		  end
   end
 endmodule

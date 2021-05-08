@@ -1,11 +1,11 @@
-module Mem_WB_Reg(clk,RegWriteM,MemtoRegM,WriteRegM,RD,ALUOutM,LinkM,MEM_PCPlus4,RegWriteW,MemtoRegW,
-WriteRegW,ReadDataW,ALUOutW,LinkW,RB_PCPlus4)
+module Mem_RB_Reg(clk,RegWriteM,MemtoRegM,WriteRegM,RD,ALUOutM,LinkM,MEM_PCPlus4,RegWriteW,MemtoRegW,
+WriteRegW,ReadDataW,ALUOutW,LinkW,RB_PCPlus4);
 input clk,RegWriteM,MemtoRegM,LinkM;
 input wire[4:0] WriteRegM;
 input wire[31:0] RD,ALUOutM,MEM_PCPlus4;
+output reg[31:0] ReadDataW,ALUOutW,RB_PCPlus4;
 output reg RegWriteW,MemtoRegW,LinkW;
 output reg[4:0] WriteRegW;
-input reg[31:0] ReadDataW,ALUOutW,RB_PCPlus4;
 always @ (posedge clk)
 begin
     RegWriteW<=RegWriteM;

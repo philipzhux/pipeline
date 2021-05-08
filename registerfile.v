@@ -1,5 +1,5 @@
-module RegisterFile(reset,ReadData1, ReadData2, WriteReg, WriteData, RegWrite, ReadData1, ReadData2);
-	input [4:0] ReadData1 ,ReadData2 ,WriteReg;
+module RegisterFile(reset,RD1, RD2, WriteReg, WriteData, RegWrite, ReadData1, ReadData2);
+	input [4:0] RD1 ,RD2 ,WriteReg;
 	input [31:0] WriteData;
 	input RegWrite,reset;
 	output reg [31:0] ReadData1 ,ReadData2;
@@ -29,10 +29,10 @@ module RegisterFile(reset,ReadData1, ReadData2, WriteReg, WriteData, RegWrite, R
 		memory[31] <= 32'h00000000;
 		end
 
-	always @(ReadData1, ReadData2)
+	always @(RD1, RD2)
 	begin
-		ReadData1 <= memory[ReadData1];
-  		ReadData2 <= memory[ReadData2];
+		ReadData1 <= memory[RD1];
+  		ReadData2 <= memory[RD2];
 	end
 
 	always @(RegWrite)

@@ -4,7 +4,7 @@
 `timescale 100fs/100fs
 module InstructionRAM
     ( // Inputs
-    , input  RESET // reset
+      input  RESET // reset
     , input  ENABLE
     , input [31:0] FETCH_ADDRESS
 

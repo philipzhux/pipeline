@@ -6,8 +6,8 @@ endmodule //add
 
 module StopControl(instr,stop);
 input [31:0] instr;
-output wire stop;
-assign stop = (instr == 32'hffffffff) ? 1'b1 : 1'b0;
+output reg stop;
+always @(*) stop <= (instr == 32'hffffffff) ? 1'b1 : 1'b0;
 endmodule
 
 module ShiftLeftBy2(in,out);
