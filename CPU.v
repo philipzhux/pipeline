@@ -30,6 +30,7 @@ wire [25:0] ID_JRawAddr;
 wire[31:0] EX_SignImm,EX_SrcA,EX_SrcB,EX_WriteData,ID_BranchPara1,ID_BranchPara2;
 wire[31:0] ID_PCBranch,ID_PCJump,ID_PCPlus4,ID_ReadData1,ID_ReadData2,IF_Instr,IF_PC,IF_PCPlus4,MEM_ALUOut;
 wire[31:0] MEM_PCPlus4, MEM_ReadData, MEM_WriteData,PCRaw,RB_ALUOut,RB_PCPlus4,RB_ReadData,RB_Result,RB_Result_B4Link;
+wire[31:0] EX_Instr,MEM_Instr,RB_Instr;
 parameter Reg_RA = 5'd31;
 //=================================DEALING WITH HAZARD=================================
 
@@ -44,9 +45,9 @@ MEM_RegWrite,EqualFlag,PC_Stall,IF_ID_Stall,IF_ID_Flush,Ctl_Mux,invalidRt,MEM_Me
 //=====================================STAGE 1: IF=====================================
 
 Mux3x32 PCMux(ID_JBFlag,IF_PCPlus4,ID_PCBranch,ID_PCJump,PCRaw);//Mux Syntax: Signal, In, In, Out
-PCReg PCHolder(PCRaw,IF_PC,Reset,PC_Stall);//PCReg Syntax: rawPC,outPC,Reset,stall
+PCReg PCHolder(PCRaw,IF_PC,Reset,clk,PC_Stall);//PCReg Syntax: rawPC,outPC,Reset,stall
 Add PCAdder(IF_PC,32'h00000004,IF_PCPlus4);
-InstructionRAM InsMem(1'b0,1'b1,IF_PC,IF_Instr);
+InstructionRAM InsMem(clk,1'b0,1'b1,IF_PC>>2,IF_Instr);
 StopControl StopOrNot(IF_Instr,stop);
 IF_ID_Reg IF_ID_Register(clk,IF_PCPlus4,IF_Instr,IF_ID_Stall,IF_ID_Flush,ID_PCPlus4,ID_Instr);
 //clk,IF_PCPlus4,IF_Instr,IF_Stall,IF_Flush,PCPlus4D,InstrD
@@ -54,7 +55,7 @@ IF_ID_Reg IF_ID_Register(clk,IF_PCPlus4,IF_Instr,IF_ID_Stall,IF_ID_Flush,ID_PCPl
 //=====================================STAGE 2: ID=====================================
 
 Parser InsParse(ID_Instr,ID_OP,ID_Funct,ID_RS,ID_RT,ID_RD,ID_Shamt,ID_Imm,ID_JRawAddr);//in,op,funct,rs,rt,rd,shamt,imm
-RegisterFile RF(Reset,ID_RS,ID_RT,RB_WriteReg,RB_Result,RB_RegWrite,ID_ReadData1,ID_ReadData2);
+RegisterFile RF(clk,Reset,ID_RS,ID_RT,RB_WriteReg,RB_Result,RB_RegWrite,ID_ReadData1,ID_ReadData2);
 //Reset,ReadData1, ReadData2, WriteReg, WriteData, RegWrite, ReadData1, ReadData2
 SignExt SignExtension(ID_Imm,ID_SignImm);
 ShiftLeftBy2 Shift(ID_SignImm,ID_ShiftImm);
@@ -73,8 +74,8 @@ JumpMux JumpAddr(ID_OP,ID_Funct,ID_JRawAddr,ID_PCPlus4,ID_BranchPara1,ID_PCJump)
 //branchOrNot BranchSignal(ID_OP,EqualFlag,ID_BranchFlag);
 LinkControl LC(ID_OP,ID_Link);
 ID_EX_Reg ID_EX_Register(clk,ID_RegWrite,ID_MemtoReg,ID_MemWrite,ID_ALUCtl,ID_ALUSrc,ID_RegDst,
-ID_ReadData1,ID_ReadData2,ID_RS,ID_RT,ID_RD,ID_SignImm,ID_Shamt,ID_Link,ID_PCPlus4,EX_RegWrite,EX_MemtoReg,EX_MemWrite,EX_ALUCtl,EX_ALUSrc,EX_RegDst,
-EX_ReadData1,EX_ReadData2,EX_RS,EX_RT,EX_RD,EX_SignImm,EX_Shamt,EX_Link,EX_PCPlus4);
+ID_ReadData1,ID_ReadData2,ID_RS,ID_RT,ID_RD,ID_SignImm,ID_Shamt,ID_Link,ID_PCPlus4,ID_Instr,EX_RegWrite,EX_MemtoReg,EX_MemWrite,EX_ALUCtl,EX_ALUSrc,EX_RegDst,
+EX_ReadData1,EX_ReadData2,EX_RS,EX_RT,EX_RD,EX_SignImm,EX_Shamt,EX_Link,EX_PCPlus4,EX_Instr);
 // clk,RegWriteD,MemtoRegD,MemWriteD,ALUControlD,ALUSrcD,RegDstD,
 // ReadData1,ReadData2,RsD,RtD,RdD,SignImmD,ShamtD,RegWriteE,MemtoRegE,MemWriteE,ALUControlE,ALUSrcE,
 // RegDstE,ReadData1E,ReadData2E,RsE,RtE,RdE,SignImmE,ShamtE
@@ -86,16 +87,16 @@ Mux3x32 FW_EX_RS_Mux(EX_RS_Mux_Signal,EX_ReadData1,MEM_ALUOut,RB_Result,EX_SrcA)
 Mux3x32 FW_EX_RT_Mux(EX_RT_Mux_Signal,EX_ReadData2,MEM_ALUOut,RB_Result,EX_WriteData);
 Mux2x32 EX_SrcB_Mux(EX_ALUSrc,EX_WriteData,EX_SignImm,EX_SrcB);
 ALU32 ALU(EX_SrcA,EX_SrcB,EX_ALUCtl,EX_Shamt,EX_ALUOut);//in1, in2, ALUControl, shamt, res
-EX_MEM_Reg EX_MEM_Register(clk,EX_RegWrite,EX_MemtoReg,EX_MemWrite,EX_WriteReg,EX_ALUOut,EX_WriteData,EX_Link,EX_PCPlus4,
-MEM_RegWrite,MEM_MemtoReg,MEM_MemWrite,MEM_WriteReg,MEM_ALUOut,MEM_WriteData,MEM_Link,MEM_PCPlus4);
+EX_MEM_Reg EX_MEM_Register(clk,EX_RegWrite,EX_MemtoReg,EX_MemWrite,EX_WriteReg,EX_ALUOut,EX_WriteData,EX_Link,EX_PCPlus4,EX_Instr,
+MEM_RegWrite,MEM_MemtoReg,MEM_MemWrite,MEM_WriteReg,MEM_ALUOut,MEM_WriteData,MEM_Link,MEM_PCPlus4,MEM_Instr);
 // clk,RegWriteE,MemtoRegE,MemWriteE,WriteRegE,EX_ALUOut,EX_WriteData
 // RegWriteM,MemtoRegM,MemWriteM,WriteRegM,MEM_ALUOut,MEM_WriteData
 
 //=====================================STAGE 4: MEM=====================================
 
-MainMemory MainRAM(1'b0,1'b1,MEM_ALUOut,{MEM_MemWrite,MEM_ALUOut,MEM_WriteData},MEM_ReadData);
-Mem_RB_Reg MEM_RB_Register(clk,MEM_RegWrite,MEM_MemtoReg,MEM_WriteReg,MEM_ReadData,MEM_ALUOut,MEM_Link,MEM_PCPlus4,RB_RegWrite,
-RB_MemtoReg,RB_WriteReg_B4Link,RB_ReadData,RB_ALUOut,RB_Link,RB_PCPlus4);
+MainMemory MainRAM(clk,1'b0,1'b1,MEM_ALUOut>>2,{MEM_MemWrite,MEM_ALUOut>>2,MEM_WriteData},MEM_ReadData);
+Mem_RB_Reg MEM_RB_Register(clk,MEM_RegWrite,MEM_MemtoReg,MEM_WriteReg,MEM_ReadData,MEM_ALUOut,MEM_Link,MEM_PCPlus4,MEM_Instr,RB_RegWrite,
+RB_MemtoReg,RB_WriteReg_B4Link,RB_ReadData,RB_ALUOut,RB_Link,RB_PCPlus4,RB_Instr);
 // clk,RegWriteM,MemtoRegM,WriteRegM,RD,ALUOutM,RegWriteW,MemtoRegW,
 // WriteRegW,ReadDataW,ALUOutW
 

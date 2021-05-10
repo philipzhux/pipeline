@@ -22,7 +22,7 @@ parameter SRLV = 4'b1011;
 parameter SRAV = 4'b1100;
 parameter XOR = 4'b1101;
 
-always @(ALUControl, in1, in2)
+always @(*)
 begin
 case(ALUControl)
 ADD: 
@@ -35,17 +35,17 @@ OR:
 SUB:
     res <= in1 + neg_in2;
 SLL:
-	res <= in1 << shamt;
+	res <= in2 << shamt;
 SLLV:
-	res <= in1 << in2;
+	res <= in2 << in1;
 SRL:
-	res <= in1 >> shamt;
+	res <= in2 >> shamt;
 SRLV:
-	res <= in1 >> in2;
+	res <= in2 >> in1;
 SRA:
-	res <= $signed(in1) >>> shamt;
-SRA:
-	res <= $signed(in1) >>> in2;
+	res <= $signed(in2) >>> shamt;
+SRAV:
+	res <= $signed(in2) >>> in1;
 LESS:
 	begin
 	if(in1 < in2)

@@ -39,10 +39,11 @@ parameter R=6'b000000;
 parameter lw=6'b100011;
 parameter sw=6'b101011;
 parameter beq=6'b000100;
-parameter addi = 6'b001000; //ALUControl same as sw and lw
-parameter andi = 6'b001100; //ALUControl 0011
-parameter ori = 6'b001101;//ALUControl 0100
-parameter slti = 6'b001010;//ALUControl 0101
+parameter addi = 6'b001000; 
+parameter andi = 6'b001100; 
+parameter ori = 6'b001101;
+parameter slti = 6'b001010;
+parameter xori = 6'b001110;
 //funct below
 parameter addx = 6'b100000;
 parameter addux = 6'b100001;
@@ -86,9 +87,10 @@ input CtlMux;
 output reg RegDst,Branch,MemtoReg,MemWrite,ALUSrc,RegWrite,invalidRt;
 output reg [3:0] ALUControl;
 
-  always @(posedge reset)
+  always @(*)
   begin
-   RegDst <= 1'b0;
+if(reset==1) begin
+    RegDst <= 1'b0;
    Branch <= 1'b0;
    MemtoReg <= 1'b0;
    ALUControl <= 4'b0000;
@@ -96,9 +98,10 @@ output reg [3:0] ALUControl;
    ALUSrc <= 1'b0;
    RegWrite <= 1'b0;
    invalidRt <= 1'b0;
+end
   end
 
-  always@(op)
+  always@(*)
     begin
     if(CtlMux==1'b1)
     begin
@@ -292,7 +295,7 @@ output reg [3:0] ALUControl;
           MemWrite<=0 ;
           ALUSrc<=1 ;
           RegWrite<=1 ;
-          ALUControl<=4'b0000;
+          ALUControl<=ADD;
           invalidRt <= 1'b1;
           end
          
@@ -306,7 +309,7 @@ output reg [3:0] ALUControl;
           MemWrite<=1 ;
           ALUSrc<=1 ;
           RegWrite<=0 ;
-          ALUControl<=4'b0000 ;
+          ALUControl<=ADD ;
           invalidRt <= 1'b1;
           end
           
@@ -331,9 +334,11 @@ output reg [3:0] ALUControl;
           MemWrite<=0 ;
           ALUSrc<=1 ;
           RegWrite<=1 ;
-          ALUControl<=4'b0000;
+          ALUControl<=ADD;
           invalidRt <= 1'b1;
           end
+
+
 
 	andi:           
 
@@ -358,6 +363,18 @@ output reg [3:0] ALUControl;
           ALUSrc<=1 ;
           RegWrite<=1 ;
           ALUControl<=OR;
+          invalidRt <= 1'b1;
+          end
+    	xori:           
+
+          begin
+          RegDst<=0 ;
+          Branch<=0 ;
+          MemtoReg<=0 ;
+          MemWrite<=0 ;
+          ALUSrc<=1 ;
+          RegWrite<=1 ;
+          ALUControl<=XOR;
           invalidRt <= 1'b1;
           end
 
@@ -393,6 +410,16 @@ output reg [3:0] ALUControl;
         RegDst <= 1'b0;
         invalidRt <= 1'b1;
     end
+    // default: begin
+    //     RegDst <= 1'b0;
+    //     Branch <= 1'b0;
+    //     MemtoReg <= 1'b0;
+    //     ALUControl <= 4'b0000;
+    //     MemWrite <= 1'b0;
+    //     ALUSrc <= 1'b0;
+    //     RegWrite <= 1'b0;
+    //     invalidRt <= 1'b0;
+    // end
       endcase
     end
     end

@@ -17,7 +17,7 @@ parameter JR = 6'b001000;
 	Control_Mux <= 0;
 	end
 always @(IF_ID_OP,IF_ID_RS,IF_ID_RT,ID_EX_MemtoReg,ID_EX_RT,ID_EX_RD,EX_MEM_WriteReg,ID_EX_RegWrite,EX_MEM_RegWrite,EqualFlag) begin
-if((ID_EX_MemtoReg == 1'b1) && ((ID_EX_RT == IF_ID_RS) || (ID_EX_RT == IF_ID_RT && ~IF_ID_invalidRt))) begin
+if((ID_EX_MemtoReg == 1'b1) && ((ID_EX_RT == IF_ID_RS && IF_ID_RS!=0) || (ID_EX_RT == IF_ID_RT && ~IF_ID_invalidRt && IF_ID_RT!=0))) begin
 			PC_Stall <= 1'b1;
 			Control_Mux <= 1'b1;
 			IF_ID_Flush <= 1'b0;

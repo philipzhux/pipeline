@@ -4,7 +4,7 @@
 `timescale 100fs/100fs
 module InstructionRAM
     ( // Inputs
-      input  RESET // reset
+      input clk, input  RESET // reset
     , input  ENABLE
     , input [31:0] FETCH_ADDRESS
 
@@ -34,10 +34,10 @@ module InstructionRAM
   reg [31:0] RAM [0:512-1];
 
   initial begin
-    $readmemb("instructions.bin",RAM);
+    $readmemb("test_cases/machine_code1.txt",RAM);
   end
 
-  always @(*) begin : InstructionRAM_blockRamFile
+  always @(negedge clk) begin : InstructionRAM_blockRamFile
     if (1'b0 & ENABLE) begin
       RAM[(wild_0)] <= DATA_0[31:0];
     end

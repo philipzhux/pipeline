@@ -6,7 +6,7 @@ module IF_ID_Reg(clk,PCPlus4F,InstrF,IF_Stall,IF_Flush,PCPlus4D,InstrD);
 
   always @(posedge clk)
     begin
-    if (IF_Stall==1'b0) 
+    if (IF_Stall!==1'b1) 
     begin
         if (IF_Flush==1'b1)
         begin

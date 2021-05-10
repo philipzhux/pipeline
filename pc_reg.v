@@ -1,14 +1,14 @@
-module PCReg (rawPC,outPC,reset,PC_Stall);
+module PCReg (rawPC,outPC,reset,clk,PC_Stall);
 input wire [31:0] rawPC;
 input reset,clk;
 input PC_Stall;
 output reg [31:0] outPC;
-always@(posedge reset) outPC <= 32'hFFFFFFFC;
-always @(*)
+always @(posedge clk)
   begin
-	  if (PC_Stall==1'b0)
+	  if (PC_Stall!==1'b1)
 		  begin
-        outPC <= rawPC;
+        if (reset==1'b0) outPC <= rawPC;
+        else outPC <= 32'hFFFF_FFFC;
 		  end
   end
 endmodule
