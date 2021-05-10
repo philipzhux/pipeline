@@ -5,7 +5,6 @@ module testbench ();
   reg clk,rst;
   integer i;
   wire stop;
-  
   CPU MIPS (clk, rst, stop);
   initial begin
     clk = 0;
@@ -15,16 +14,8 @@ module testbench ();
     while (MIPS.RB_Instr!==32'hffff_ffff) begin
        #HALF_PERIOD clk=~clk;
     end
-
     for (i=0; i < 512; i = i + 1) begin
       $display("%b", MIPS.MainRAM.DATA_RAM[i]);
     end
-    $display("xxx");
-    for (i=0; i < 32; i = i + 1) begin
-      $display("%b", MIPS.RF.memory[i]);
-    end
-    $finish;
   end
-
-
 endmodule // test
