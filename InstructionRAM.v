@@ -34,7 +34,7 @@ module InstructionRAM
   reg [31:0] RAM [0:512-1];
 
   initial begin
-    $readmemb("test_cases/machine_code1.txt",RAM);
+    $readmemb("test_code.txt",RAM);
   end
 
   always @(negedge clk) begin : InstructionRAM_blockRamFile

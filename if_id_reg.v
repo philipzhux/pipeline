@@ -15,7 +15,7 @@ module IF_ID_Reg(clk,PCPlus4F,InstrF,IF_Stall,IF_Flush,PCPlus4D,InstrD);
         end
         else begin
             PCPlus4D<=PCPlus4F;
-            InstrD <= InstrF; 
+            InstrD <= InstrF;
         end    
     end
     end

@@ -1,4 +1,4 @@
-WARNING: ./InstructionRAM.v:37: $readmemb(test_cases/machine_code1.txt): Not enough words in the file for the requested range [0:511].
+WARNING: ./InstructionRAM.v:37: $readmemb(test_code.txt): Not enough words in the file for the requested range [0:511].
 00000000000000000000000000000001
 00000000000000000000000000000010
 00000000000000000000000000010100

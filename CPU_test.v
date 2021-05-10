@@ -19,6 +19,10 @@ module testbench ();
     for (i=0; i < 512; i = i + 1) begin
       $display("%b", MIPS.MainRAM.DATA_RAM[i]);
     end
+    $display("xxx");
+    for (i=0; i < 32; i = i + 1) begin
+      $display("%b", MIPS.RF.memory[i]);
+    end
     $finish;
   end
 
