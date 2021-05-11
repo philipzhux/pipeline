@@ -16,10 +16,14 @@ output [31:0] out;
 assign out = in << 2;
 endmodule
 
-module SignExt(in,out);
+module SignExt(in,out,op);
+parameter andi = 6'b001100; 
+parameter ori = 6'b001101;
+parameter xori = 6'b001110;
+input [5:0] op;
 input  [15:0] in;
 output [31:0] out;
-assign out =  {{16{in[15]}}, in};
+assign out = (op===andi||op===ori||op===xori)?{{16{1'b0}}, in}:{{16{in[15]}}, in};
 endmodule
 
 module Comparator(input [31:0] in1,input [31:0] in2,output equal);

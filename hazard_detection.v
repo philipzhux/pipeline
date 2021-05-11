@@ -23,7 +23,7 @@ if((ID_EX_MemtoReg == 1'b1) && ((ID_EX_RT == IF_ID_RS && IF_ID_RS!=0) || (ID_EX_
 			IF_ID_Flush <= 1'b0;
 			IF_ID_Stall <= 1'b1;
 end else if(((IF_ID_OP == BEQ) || (IF_ID_OP == BNE) || ((IF_ID_OP == R_Type) && (IF_ID_Funct == JR))) 
-		&& (((ID_EX_RD == IF_ID_RS || (ID_EX_RD == IF_ID_RT && ~IF_ID_invalidRt)) && (ID_EX_RegWrite == 1'b1)) ||
+		&& ( ( ( (ID_EX_RD == IF_ID_RS) || (ID_EX_RD == IF_ID_RT && ~IF_ID_invalidRt) ) && (ID_EX_RegWrite == 1'b1) ) ||
 		 ((EX_MEM_WriteReg == IF_ID_RS || (EX_MEM_WriteReg == IF_ID_RT && ~IF_ID_invalidRt)) 
     && (EX_MEM_RegWrite == 1'b1) && (EX_MEM_MemtoReg == 1'b1)))) begin //for branch alike: [EX not ready] or [MEM not ready(when memtoreg==1)]
 			PC_Stall <= 1'b1;

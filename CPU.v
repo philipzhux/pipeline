@@ -38,7 +38,7 @@ Forwarding Forward(ID_RS_Mux_Signal,ID_RT_Mux_Signal,EX_RS_Mux_Signal,EX_RT_Mux_
 MEM_RegWrite,MEM_WriteReg,RB_RegWrite,RB_WriteReg,MEM_MemtoReg);
 // ID_RS_Mux_Signal,ID_RT_Mux_Signal,EX_RS_Mux_Signal,EX_RT_Mux_Signal,
 // ID_RS,ID_RT,EX_RS,EX_RT,EX_MEM_RegWrite,EX_MEM_WriteReg,MEM_RB_RegWrite,MEM_RB_WriteReg
-HazardDetectionUnit Detect(ID_OP,ID_Funct,ID_RS,ID_RT,EX_MemtoReg,EX_RT,EX_RD,MEM_WriteReg,EX_RegWrite,
+HazardDetectionUnit Detect(ID_OP,ID_Funct,ID_RS,ID_RT,EX_MemtoReg,EX_RT,EX_WriteReg,MEM_WriteReg,EX_RegWrite,
 MEM_RegWrite,EqualFlag,PC_Stall,IF_ID_Stall,IF_ID_Flush,Ctl_Mux,invalidRt,MEM_MemtoReg);
 // (IF_ID_OP,IF_ID_Funct,IF_ID_RS,IF_ID_RT,ID_EX_MemtoReg,ID_EX_RT,ID_EX_RD,EX_MEM_WriteReg,
 // ID_EX_RegWrite,EX_MEM_RegWrite,EqualFlag,PC_Stall,IF_ID_Stall,IF_ID_Flush,Control_Mux,invalidRt)
@@ -57,7 +57,7 @@ IF_ID_Reg IF_ID_Register(clk,IF_PCPlus4,IF_Instr,IF_ID_Stall,IF_ID_Flush,ID_PCPl
 Parser InsParse(ID_Instr,ID_OP,ID_Funct,ID_RS,ID_RT,ID_RD,ID_Shamt,ID_Imm,ID_JRawAddr);//in,op,funct,rs,rt,rd,shamt,imm
 RegisterFile RF(clk,Reset,ID_RS,ID_RT,RB_WriteReg,RB_Result,RB_RegWrite,ID_ReadData1,ID_ReadData2);
 //Reset,ReadData1, ReadData2, WriteReg, WriteData, RegWrite, ReadData1, ReadData2
-SignExt SignExtension(ID_Imm,ID_SignImm);
+SignExt SignExtension(ID_Imm,ID_SignImm,ID_OP);
 ShiftLeftBy2 Shift(ID_SignImm,ID_ShiftImm);
 Add BranchAdd(ID_PCPlus4,ID_ShiftImm,ID_PCBranch);//add: in-in-out
 ControlUnit Control(Reset,Ctl_Mux,ID_OP,ID_Funct,ID_RegWrite,ID_MemtoReg,ID_Branch,ID_ALUCtl,ID_ALUSrc,ID_RegDst,ID_MemWrite,invalidRt);
