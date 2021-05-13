@@ -10,8 +10,7 @@ ZHU Chuyan (119010486). CSC 3050 Spring 2021.
 |   +-- CPU.v,CPU_test.v
 |   +-- pc_reg.v,if_id_reg.v,id_ex_reg.v,ex_mem_reg.v,mem_wb_reg.v
 |   +-- forward.v,hazard_detection.v
-|   +-- registerfile.v,mux.v,ctrl.v
-|   +-- InstructionRAM.v,MainMemory.v
+|   +-- registerfile.v,mux.v,ctrl.v,InstructionRAM.v,MainMemory.v
 |   +-- Makefile
 ```
 ### 1.2 Run with makefile:
@@ -23,10 +22,12 @@ ZHU Chuyan (119010486). CSC 3050 Spring 2021.
 To compile the verilog files and run the test bench at same time use:
 ```shell
     cd ./src
-    make run MCPATH=/tmp/xx/xxxxx/machine_codeX.txt
+    make run F=/tmp/xx/xxxxx/machine_codeX.txt
     # REPLACE THE VALUE WITH TESTING MACHINE CODE FILE PATH
+    # or if instructions.bin is already ready simply:
+    # make runraw
 ```
-This will generate a verilog executable file named **compiled** and a copy of your machine code **test_code.txt**, and the result of main memory is located in **result.txt** in the src directory.
+This will generate a verilog executable file named **compiled** and a copy of your machine code **instructions.bin**, and the result of main memory is located in **result.txt** in the src directory.
 You can also clean the related files with ```make clean``` or compile without execution with ```make compile```.
 
 ## 2. Big Picture
@@ -37,7 +38,7 @@ The central idea of pipelined CPU is to increase the overall throughput, or say,
 * ```MEM```: Memory Access or Write
 * ```WB```:  Write Back
 
-To isolate the operations/data of a particular stage within a cycle (prevent the result a one stage from intervening another), we need four clocked registers (buffer) to restrict the move of data to happend only at a positive clock edge (actually five, the program counter also needs one register to hold). They are ```IF/ID```, ```ID/EX```, ```EX/MEM```, and ```MEM/WB```.
+To isolate the operations/data of a particular stage within a cycle (prevent the result in a one stage from intervening another), we need four pipeline registers (buffer) to restrict the move of data to happend only at a positive clock edge (actually five, the program counter also needs one register to hold). They are ```IF/ID```, ```ID/EX```, ```EX/MEM```, and ```MEM/WB```.
 
 Inside each of the five stage, the strucure is similar to the single-path MIPS CPU:
 * ```IF``` stage is resposible for instruction fetching. Therefore, there is a structure to feed the desired address (either **previous-pc+4** or **jump/branch address**) to the ```Instruction Memory``` to fetch the correct instruction and pass it to the intermediate register ```IF/ID```. It is also in charge of incrementing the PC by 4 and pass to ```IF/ID```.
@@ -53,7 +54,7 @@ Inside each of the five stage, the strucure is similar to the single-path MIPS C
 
 However, three type of hazards may occur in this pipelined model: **structural hazard**, **data hazard**, and **control hazard**.
 * Structural hazard: it occurs when read and write of the register file happen at the same time in the second stage, which can be simply eliminated by **deviding the cycle into two halves: write at rising edge and read at falling edge** (as the writing instruction must be prior to the reading instruction)
-* Data hazard: it occurs when the sucessing instruction is accessing the register which the previous instruction is going to but has not yet written to. <br>It can be eliminated by forwarding if the desired data is ready at the point of use (e.g. data in EX/MEM or MEM/WB can be forwarded to feed the EX stage if it matches the register if requires). <br>But if it is not ready (e.g. *need lw data from precedent instruction to feed the EX stage* **or** *for branch instuction it need EX result from precedent instriction to determine the condition in second stage*), we need to **stall for a cycle** by repeting the same PC and flush the control signal from ```ID/EX``` to prevent writing.
+* Data hazard: it occurs when the sucessing instruction is accessing the register which the previous instruction is going to but has not yet written to. <br>It can be eliminated by forwarding if the desired data is ready at the point of use (e.g. data in EX/MEM or MEM/WB can be forwarded to feed the EX stage if it matches the register if requires). <br>But if it is not ready (e.g. *need lw data from precedent instruction to feed the EX stage* **or** *for branch instuction it need EX result from precedent instriction to determine the condition in second stage*), we need to **stall for a cycle** by repeating the same PC and flush the control signal from ```ID/EX``` to prevent writing.
 * Control hazard: it occurs in case of taken case of branch and all jumps (actually for ```J``` and ```JAL``` instuction we are capable of jumping right at the first stage, but for simplicity I decided to make all jump instructions equall). It can be fixed by flushing the incorrect instuctions that have entered the pipeline. Penalty can be reduced by moving the condition determining process to the second stage so only one cycle is wasted in case of flush.
 ## 3. Data Path
 Shown below is the datapath of my designed modified from the one provided in a textbook.  

@@ -36,6 +36,7 @@ assign Link = (OP==JAL)?1'b1:1'b0;
 endmodule
 module ControlUnit(reset,CtlMux,op,funct,RegWrite,MemtoReg,Branch,ALUControl,ALUSrc,RegDst,MemWrite,invalidRt);
 parameter R=6'b000000;
+parameter STOP = 6'b111111;
 parameter lw=6'b100011;
 parameter sw=6'b101011;
 parameter beq=6'b000100;
@@ -116,6 +117,18 @@ end
     end
     else begin
         case (op)
+
+        STOP:
+    begin
+        RegDst <= 1'b0;
+        Branch <= 1'b0;
+        MemtoReg <= 1'b0;
+        ALUControl <= 4'b0000;
+        MemWrite <= 1'b0;
+        ALUSrc <= 1'b0;
+        RegWrite <= 1'b0;
+        invalidRt <= 1'b0;
+    end
 
         R:           
 

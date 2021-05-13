@@ -3,7 +3,7 @@
 module testbench ();
   parameter HALF_PERIOD = 10;
   reg clk,rst;
-  integer i;
+  integer i,f;
   wire stop;
   CPU MIPS (clk, rst, stop);
   initial begin
@@ -14,8 +14,11 @@ module testbench ();
     while (MIPS.RB_Instr!==32'hffff_ffff) begin
        #HALF_PERIOD clk=~clk;
     end
+    f = $fopen("result.txt","w");
     for (i=0; i < 512; i = i + 1) begin
-      $display("%b", MIPS.MainRAM.DATA_RAM[i]);
+      $fwrite(f,"%b\n", MIPS.MainRAM.DATA_RAM[i]);
     end
+    $fclose(f);
+    $finish;
   end
 endmodule // test
