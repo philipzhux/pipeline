@@ -31,7 +31,7 @@ This will generate a verilog executable file named **compiled** and a copy of yo
 You can also clean the related files with ```make clean``` or compile without execution with ```make compile```.
 
 ## 2. Big Picture
-The central idea of pipelined CPU is to increase the overall throughput, or say, utilization of the CPU, by enabling different (usually neibouring) instructions to run concurrently, with each of them in different stages. Isolation is very important in concurrency, so we need to devide a single cycle data path into multiple stages and for the 5-stage pipelined CPU, the five stages are:
+The central idea of pipelined CPU is to increase the overall throughput, or say, utilization of the CPU, by enabling different (usually neighboring) instructions to run concurrently, with each of them in different stages. Isolation is very important in concurrency, so we need to devide a single cycle data path into multiple stages and for the 5-stage pipelined CPU, the five stages are:
 * ```IF```:  Instruction Fetching
 * ```ID```:  Instruction Decoding
 * ```EX```:  Excecution
