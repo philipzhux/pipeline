@@ -22,7 +22,7 @@ ZHU Chuyan (119010486). CSC 3050 Spring 2021.
 To compile the verilog files and run the test bench at same time use:
 ```shell
     cd ./src
-    make run F=/tmp/xx/xxxxx/machine_codeX.txt
+    make run IN=/tmp/xx/xxxxx/machine_codeX.txt
     # REPLACE THE VALUE WITH TESTING MACHINE CODE FILE PATH
     # or if instructions.bin is already ready simply:
     # make runraw
