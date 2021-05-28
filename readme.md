@@ -64,7 +64,7 @@ Shown below is the datapath of my designed modified from the one provided in a t
 * Extra ```Jump Add & Shift Unit``` processes the 26-bit raw jump address into the 32-bit jump address for ```J``` and ```JAL```.
 * An extra multiplexer selects between the result of ```Jump Add & Shift Unit``` (```J``` and ```JAL```) and ```RD1``` (for ```JR```) and gives the jump address.
 * For ```JAL```, ```Link``` signal is passed one step per cycle up to ```WB``` stage to determine whether the jump address is feed as the result to write back. 
-*To correct my minor mistake in the graph, the ```ReadData1E (for JAL)``` should come from the jump address in the second stage but not ```RD1```.*
+* ***To correct my minor mistake in the graph, the ```ReadData1E (for JAL)``` should come from the jump address in the second stage but not ```RD1```.***
 * ```Hazard Unit``` includes forwarding module and hazard detection module.
 
 ## 4. Implementation Ideas
