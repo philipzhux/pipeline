@@ -1,6 +1,6 @@
 # Project 3 Report
 *Note: Hazards solved with forwarding and stalling.*
-ZHU Chuyan (119010486). CSC 3050 Spring 2021.
+ZHU Chuyan. Spring 2021.
 ## 1. How to Run
 ### 1.1 File Structure:
 ```shell
